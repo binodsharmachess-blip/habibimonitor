@@ -57,10 +57,12 @@ class Turso:
     """Minimal Turso/libSQL client over the HTTP pipeline API."""
 
     def __init__(self, url, token):
-        url = url.strip().rstrip("/")
-        if url.startswith("libsql://"):
-            url = "https://" + url[len("libsql://"):]
-        self.endpoint = url + "/v2/pipeline"
+        url = url.strip().strip("'\"").rstrip("/")
+        for scheme in ("libsql://", "turso://", "wss://", "ws://", "https://", "http://"):
+            if url.lower().startswith(scheme):
+                url = url[len(scheme):]
+                break
+        self.endpoint = "https://" + url + "/v2/pipeline"
         self.headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
