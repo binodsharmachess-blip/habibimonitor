@@ -380,12 +380,6 @@ class HabibiBot:
             rec = self.pending.get(p[1].lower())
             if rec is not None:
                 rec["account"] = clean(p[2])
-        elif cmd == "378" and len(p) >= 3:
-            rec = self.pending.get(p[1].lower())
-            m = re.search(r"connecting from\s+(.+)$", clean(p[-1]), re.I)
-            # some servers put "*@host ip" here instead of a country - never store that
-            if rec is not None and m and "@" not in m.group(1) and not re.search(r"\d+\.\d+\.\d+\.\d+", m.group(1)):
-                rec["country"] = m.group(1).strip()
         elif cmd == "317" and len(p) >= 4:
             rec = self.pending.get(p[1].lower())
             if rec is not None and p[3].isdigit():
@@ -396,6 +390,16 @@ class HabibiBot:
                 self._save_whois(rec)
         elif cmd in ("401", "402") and len(p) >= 2:
             self.pending.pop(p[1].lower(), None)
+        elif cmd.isdigit() and len(p) >= 3 and p[1].lower() in self.pending:
+            # any other whois-style numeric (344, 320, 378 ...): look for the country line
+            rec = self.pending[p[1].lower()]
+            text = clean(p[-1])
+            m = re.search(r"connecting from\s+(.+)$", text, re.I)
+            # some servers put "*@host ip" here instead of a country - never store that
+            if m and "@" not in m.group(1) and not re.search(r"\d+\.\d+\.\d+\.\d+", m.group(1)):
+                rec["country"] = m.group(1).strip()
+            else:
+                log.debug("unhandled whois numeric: %s", line)
 
     def _save_whois(self, r):
         key = f"{r['nick'].lower()}!{r['ident'].lower()}@{r['host'].lower()}"
