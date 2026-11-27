@@ -7,7 +7,7 @@ Environment variables (all optional except NICKSERV_PASSWORD):
     IRC_PORT            default 6697 (SSL)
     IRC_VERIFY_SSL      set to 1 to verify the server certificate (default: off)
     BOT_NICK / BOT_REALNAME   default habibi
-    DEFAULT_CHANNELS    default #chatindian,#chatwithworld,#global
+    DEFAULT_CHANNELS    default #chatindian,#chatwithworld,#global,#games
     COMMAND_CHANNEL     only channel where commands work, default #chatwithworld
     SUPER_ADMINS        default Antonio,juggu,Starboy,sasha
     TZ_OFFSET_MIN / TZ_LABEL   time shown in results, default 345 / Nepal Time
@@ -38,7 +38,7 @@ REALNAME = env("BOT_REALNAME", "habibi")
 NICKSERV_PASSWORD = env("NICKSERV_PASSWORD")
 DEFAULT_CHANNELS = [
     c.strip()
-    for c in env("DEFAULT_CHANNELS", "#chatindian,#chatwithworld,#global").split(",")
+    for c in env("DEFAULT_CHANNELS", "#chatindian,#chatwithworld,#global,#games").split(",")
     if c.strip()
 ]
 COMMAND_CHANNEL = env("COMMAND_CHANNEL", "#chatwithworld").lower()
